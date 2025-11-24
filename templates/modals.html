@@ -1,0 +1,144 @@
+{# Modals for problem details and help #}
+<!-- Problem View (Full Screen Split Layout) -->
+<div id="problem-view" class="problem-view">
+    <div class="problem-view-header">
+        <div class="header-left">
+            <button class="btn btn-ghost btn-icon" onclick="closeProblemView()" title="返回列表">
+                <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M14 26L15.41 24.59 7.83 17 28 17 28 15 7.83 15 15.41 7.41 14 6 4 16 14 26z"/></svg>
+            </button>
+            
+
+            <div class="problem-nav-controls" style="position: relative;">
+                <div style="display: flex; align-items: center;">
+                    <button class="btn btn-ghost problem-list-btn" onclick="toggleProblemList()" title="題目列表">
+                        <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor"><path d="M4 6H28V8H4zM4 12H28V14H4zM4 18H28V20H4zM4 24H28V26H4z"/></svg>
+                        <span>Problem List</span>
+                    </button>
+                    <button class="btn btn-ghost btn-icon" id="btn-prev-prob" onclick="prevProblem()" title="上一題" style="margin-left: 4px;">
+                        <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M20 24L10 16 20 8z"/></svg>
+                    </button>
+                    <button class="btn btn-ghost btn-icon" id="btn-next-prob" onclick="nextProblem()" title="下一題">
+                        <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M12 8L22 16 12 24z"/></svg>
+                    </button>
+                </div>
+                
+                <!-- Dropdown Menu -->
+                <div id="problem-list-dropdown" class="problem-list-dropdown">
+                    <!-- Items will be injected by JS -->
+                </div>
+            </div>
+
+
+            <h2 id="problem-view-title">Problem Title</h2>
+            
+            <!-- Problem Info Container -->
+            <div id="problem-header-info" style="display: flex; align-items: center; margin-left: 16px; gap: 12px;"></div>
+        </div>
+        <div class="header-right">
+            <button class="btn btn-secondary btn-sm" id="btn-save-view" onclick="saveCode()" disabled>
+                <svg width="16" height="16" style="margin-right: 6px;" viewBox="0 0 32 32" fill="currentColor"><path d="M27.71,9.29l-5-5A1,1,0,0,0,22,4H6A2,2,0,0,0,4,6V26a2,2,0,0,0,2,2H26a2,2,0,0,0,2-2V10A1,1,0,0,0,27.71,9.29ZM12,6h8v4H12Zm8,20H12V18h8Zm2,0V18a2,2,0,0,0-2-2H12a2,2,0,0,0-2,2v8H6V6h4v4a2,2,0,0,0,2,2h8a2,2,0,0,0,2-2V6.41l4,4V26Z"/></svg>
+                儲存 (Save)
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="runFromEditor()">
+                <svg width="16" height="16" style="margin-right: 6px;" viewBox="0 0 32 32" fill="currentColor"><path d="M7,28a1,1,0,0,1-1-1V5a1,1,0,0,1,1.4819-.8763l20,11a1,1,0,0,1,0,1.7525l-20,11A1.0005,1.0005,0,0,1,7,28Z"/></svg>
+                執行測試 (Run)
+            </button>
+        </div>
+    </div>
+    
+    <div class="split-container">
+        <!-- Left Pane: Description -->
+        <div class="split-pane left-pane">
+            <!-- Language Selector -->
+            <div id="lang-selector-container" class="lang-selector-container" style="display: none;">
+                <!-- Language buttons will be injected by JS -->
+            </div>
+            <div class="pane-content" id="problem-description-content">
+                <!-- Description loaded here -->
+            </div>
+        </div>
+        
+        <!-- Right Pane: Code & Results -->
+        <div class="split-pane right-pane">
+            <div class="code-section">
+                <div class="section-header">
+                    <span style="font-weight: 600; font-size: 0.875rem; color: var(--cds-text-secondary);">Code</span>
+                </div>
+                <div id="editor-container-view" class="monaco-container"></div>
+            </div>
+            
+            <div class="results-section">
+                <div class="section-header">
+                    <span style="font-weight: 600; font-size: 0.875rem; color: var(--cds-text-secondary);">Test Results</span>
+                </div>
+                <div id="results-container-view" class="results-content">
+                    <div style="text-align:center; color: var(--cds-text-secondary); padding: 20px;">尚未執行測試</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Help Modal -->
+<div id="help-modal-overlay" class="modal-overlay" onclick="closeHelpModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h2 style="margin:0; font-size:1.25rem; font-weight:400;">操作說明</h2>
+            <button class="modal-close" onclick="closeHelpModal()">
+                <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="help-modal-body" class="help-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Push Confirmation Modal -->
+<div id="push-confirm-modal" class="modal-overlay" onclick="closePushConfirmModal()">
+    <div class="modal" onclick="event.stopPropagation()" style="max-width: 500px;">
+        <div class="modal-header">
+            <h2 style="margin:0; font-size:1.25rem; font-weight:400;">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 8px; vertical-align: middle;">
+                    <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/>
+                    <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
+                </svg>
+                確認推送到 GitHub
+            </h2>
+            <button class="modal-close" onclick="closePushConfirmModal()">
+                <svg width="20" height="20" viewBox="0 0 32 32" fill="currentColor"><path d="M24 9.4L22.6 8 16 14.6 9.4 8 8 9.4 14.6 16 8 22.6 9.4 24 16 17.4 22.6 24 24 22.6 17.4 16 24 9.4z"/></svg>
+            </button>
+        </div>
+        <div class="modal-body" style="padding: 24px;">
+            <div style="background-color: #fff4e5; border-left: 4px solid var(--cds-warning); padding: 16px; margin-bottom: 20px; color: var(--cds-text-primary);">
+                <strong style="display: block; margin-bottom: 8px;">⚠️ 請注意</strong>
+                <p style="margin: 0;">此操作將會：</p>
+                <ul style="margin: 8px 0 0 20px; padding: 0;">
+                    <li>提交您在 <code>src/*.cpp</code> 的所有變更</li>
+                    <li>推送到遠端 GitHub repository</li>
+                    <li>觸發自動評分系統</li>
+                </ul>
+            </div>
+            
+            <div style="margin-bottom: 20px; color: var(--cds-text-secondary);">
+                <p style="margin-top: 0;">系統將自動：</p>
+                <ol style="margin: 8px 0 0 20px; padding: 0; line-height: 1.8;">
+                    <li>檢查是否有變更</li>
+                    <li>執行 <code>git add src/*.cpp</code></li>
+                    <li>執行 <code>git commit -m "GUI 自動提交"</code></li>
+                    <li>執行 <code>git push</code></li>
+                </ol>
+            </div>
+            
+            <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+                <button class="btn btn-secondary" onclick="closePushConfirmModal()">取消</button>
+                <button class="btn btn-git" onclick="confirmPushToGitHub()">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="margin-right: 6px;">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                    </svg>
+                    確認推送
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
